@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+Cocaine::CommandLine.path = '/usr/local/bin'
 
 module PancakeFace
   class Face
@@ -57,13 +58,13 @@ module PancakeFace
       begin
         build_mask
 
-        # # Vignette
-        # Cocaine::CommandLine.new('mogrify', %q[
-        #   -background black -vignette 30x65000 \
-        #   :file
-        # ].strip).run(
-        #   file: @mask_path
-        # )
+        # Vignette
+        Cocaine::CommandLine.new('mogrify', %q[
+          -background black -vignette 30x65000 \
+          :file
+        ].strip).run(
+          file: @mask_path
+        )
 
         # Composite
         Cocaine::CommandLine.new('convert', %q[
@@ -84,7 +85,7 @@ module PancakeFace
 
     def build_mask
       threshold = 60
-      while !analyse_mask
+      while !analyse_mask && threshold > 10
         puts threshold
         create_mask(threshold)
         threshold -= 5
