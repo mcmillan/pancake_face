@@ -53,7 +53,7 @@ module PancakeFace
 
     def composite_face(face)
       @face      = face
-      @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.tif")
+      @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.jpg")
 
       begin
         build_mask
