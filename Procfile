@@ -1,1 +1,1 @@
-web: RACK_ENV=production rackup
+web: RACK_ENV=production bundle exec rackup
