@@ -83,7 +83,7 @@ module PancakeFace
     end
 
     def build_mask
-      threshold = 60
+      threshold = 45
       while !analyse_mask
         create_mask(threshold)
         threshold -= 5
@@ -112,6 +112,7 @@ module PancakeFace
       scores    = palette.scores(histogram.scores, 1)
 
       scores.first[1].html != '#ffffff'
+      true
     end
   end
 
