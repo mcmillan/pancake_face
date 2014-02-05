@@ -44,31 +44,50 @@ module PancakeFace
   end
 
   class Compositor
-    def initialize(source, faces)
-      @magick_face = MiniMagick::Image.open(source)
-      @pancake     = MiniMagick::Image.open('sources/pancake.jpg')
-      
+    def initialize(source, faces, id)
+      @id     = id
+      @source = source
       composite_face(faces.first)
     end
 
     def composite_face(face)
-      @magick_face.crop "#{face.width}x#{face.height}+#{face.coordinates[:top_left][:x]}+#{face.coordinates[:top_left][:y]}"
-      @magick_face.scale '50%'
-      @magick_face.scale '200%'
-      @magick_face.resize "250x250"
-      @magick_face.modulate "100,20"
-      @magick_face.posterize 15
-      # @magick_face.gaussian_blur 10
-      @magick_face.vignette "0x10+5+5"
-      @magick_face.noise 5   
-      @composited = @pancake.composite(@magick_face) do |c|
-        c.compose "color-burn"
-        c.geometry "+125+290"
-      end
-    end
+      @mask_path = "tmp/masks/#{@id}.jpg"
 
-    def write(*args)
-      @composited.write(*args)
+      begin
+        # Initial conversion
+        Cocaine::CommandLine.new('convert', %q[
+          :in \
+          -crop :crop -quantize GRAY -dither None -colors 2 -negate -resize 400x400 \
+          :out
+        ].strip).run(
+          crop: "#{face.width}x#{face.height}+#{face.coordinates[:top_left][:x]}+#{face.coordinates[:top_left][:y]}",
+          in: @source,
+          out: @mask_path
+        )
+
+        # Vignette
+        Cocaine::CommandLine.new('mogrify', %q[
+          -background black -vignette 30x65000 \
+          :file
+        ].strip).run(
+          file: @mask_path
+        )
+
+        # Composite
+        Cocaine::CommandLine.new('convert', %q[
+          sources/pancake.jpg \
+          sources/burn.jpg \
+          \( -background black -blur 0x1 -noise 0x3 -splice 128x80+0+0 :mask \) \
+          -composite :out
+        ].strip).run(
+          mask: @mask_path,
+          out: "public/faces/#{@id}.jpg"
+        )
+      rescue => e
+        raise e
+      ensure
+        # FileUtils.rm_rf(@mask_path)
+      end
     end
   end
 
@@ -96,14 +115,12 @@ module PancakeFace
   end
 
   class Generator
-    attr_accessor :filename
+    attr_accessor :id
 
     def initialize(source)
+      @id       = SecureRandom.uuid
       faces     = Detector.new(source).detect
-      composite = Compositor.new(source, faces)
-      
-      self.filename  = "#{SecureRandom.uuid}.jpg"
-      composite.write("public/faces/#{self.filename}")
+      composite = Compositor.new(source, faces, @id)
     end
   end
 end
@@ -115,5 +132,5 @@ end
 post '/' do
   face = PancakeFace::Generator.new(params[:image][:tempfile].path)
 
-  redirect "/faces/#{face.filename}"
+  redirect "/faces/#{face.id}.jpg"
 end
