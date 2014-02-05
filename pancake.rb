@@ -52,7 +52,7 @@ module PancakeFace
 
     def composite_face(face)
       @face      = face
-      @mask_path = "tmp/masks/#{@id}.jpg"
+      @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.tif")
 
       begin
         build_mask
@@ -83,11 +83,13 @@ module PancakeFace
     end
 
     def build_mask
-      threshold = 45
+      threshold = 60
       while !analyse_mask
+        puts threshold
         create_mask(threshold)
         threshold -= 5
       end
+      puts 'done'
     end
 
     def create_mask(threshold)
@@ -111,8 +113,9 @@ module PancakeFace
       palette   = Colorscore::Palette.from_hex(['ffffff', '000000'])
       scores    = palette.scores(histogram.scores, 1)
 
+      puts scores
+
       scores.first[1].html != '#ffffff'
-      true
     end
   end
 
