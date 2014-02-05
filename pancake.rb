@@ -52,18 +52,18 @@ module PancakeFace
 
     def composite_face(face)
       @face      = face
-      @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.tif")
+      @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.jpg")
 
       begin
         build_mask
 
-        # Vignette
-        Cocaine::CommandLine.new('mogrify', %q[
-          -background black -vignette 30x65000 \
-          :file
-        ].strip).run(
-          file: @mask_path
-        )
+        # # Vignette
+        # Cocaine::CommandLine.new('mogrify', %q[
+        #   -background black -vignette 30x65000 \
+        #   :file
+        # ].strip).run(
+        #   file: @mask_path
+        # )
 
         # Composite
         Cocaine::CommandLine.new('convert', %q[
