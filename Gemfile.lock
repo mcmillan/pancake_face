@@ -13,11 +13,16 @@ GEM
       activesupport (>= 3.0)
     cocaine (0.5.3)
       climate_control (>= 0.0.3, < 1.0)
+    color (1.5.1)
+    colorscore (0.0.4)
+      color
     i18n (0.6.9)
     mini_magick (3.7.0)
       subexec (~> 0.2.1)
     minitest (4.7.5)
     multi_json (1.8.4)
+    puma (2.7.1)
+      rack (>= 1.1, < 2.0)
     rack (1.5.2)
     rack-protection (1.5.2)
       rack
@@ -46,7 +51,9 @@ PLATFORMS
 
 DEPENDENCIES
   cocaine
+  colorscore
   mini_magick
+  puma
   ruby-opencv (~> 0.0.12)
   sinatra
   sinatra-contrib

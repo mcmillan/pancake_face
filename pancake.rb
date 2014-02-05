@@ -51,19 +51,11 @@ module PancakeFace
     end
 
     def composite_face(face)
+      @face      = face
       @mask_path = "tmp/masks/#{@id}.jpg"
 
       begin
-        # Initial conversion
-        Cocaine::CommandLine.new('convert', %q[
-          :in \
-          -crop :crop -quantize GRAY -dither None -colors 2 -negate -resize 400x400 \
-          :out
-        ].strip).run(
-          crop: "#{face.width}x#{face.height}+#{face.coordinates[:top_left][:x]}+#{face.coordinates[:top_left][:y]}",
-          in: @source,
-          out: @mask_path
-        )
+        build_mask
 
         # Vignette
         Cocaine::CommandLine.new('mogrify', %q[
@@ -88,6 +80,38 @@ module PancakeFace
       ensure
         # FileUtils.rm_rf(@mask_path)
       end
+    end
+
+    def build_mask
+      threshold = 60
+      while !analyse_mask
+        create_mask(threshold)
+        threshold -= 5
+      end
+    end
+
+    def create_mask(threshold)
+      # Initial conversion
+      Cocaine::CommandLine.new('convert', %q[
+        :in \
+        -crop :crop -threshold :threshold% -colors 2 -colorspace gray -normalize -negate -resize 400x400 \
+        :out
+      ].strip).run(
+        crop: "#{@face.width}x#{@face.height}+#{@face.coordinates[:top_left][:x]}+#{@face.coordinates[:top_left][:y]}",
+        in: @source,
+        out: @mask_path,
+        threshold: threshold.to_s
+      )
+    end
+
+    def analyse_mask
+      return false unless File.exists?(@mask_path)
+
+      histogram = Colorscore::Histogram.new(@mask_path)
+      palette   = Colorscore::Palette.from_hex(['ffffff', '000000'])
+      scores    = palette.scores(histogram.scores, 1)
+
+      scores.first[1].html != '#ffffff'
     end
   end
 
@@ -124,6 +148,8 @@ module PancakeFace
     end
   end
 end
+
+set :server, :puma
 
 get '/' do
   erb :index
