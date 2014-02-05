@@ -157,7 +157,19 @@ get '/' do
 end
 
 post '/' do
-  face = PancakeFace::Generator.new(params[:image][:tempfile].path)
+  path = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{SecureRandom.uuid}.jpg")
 
-  redirect "/faces/#{face.id}.jpg"
+  `wget -O #{path} #{params[:url]}`
+
+  begin
+    face = PancakeFace::Generator.new(path)
+  rescue => e
+    raise e
+  ensure
+    FileUtils.rm_rf(path)
+  end
+
+  content_type :json
+  
+  { file: "/faces/#{face.id}.jpg" }.to_json
 end
