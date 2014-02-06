@@ -1,0 +1,16 @@
+<table width="100%" border="2">
+  <% Dir['public/fixtures/*'].each do |f| %>
+    <tr>
+      <th colspan="2"><%= file = Pathname.new(f).basename %>
+    </tr>
+
+    <tr>
+      <td width="50%">
+        <img src="/fixtures/<%= file %>" style="max-width: 100%;">
+      </td>
+      <td>
+        <img src="/tests/<%= file %>" style="max-width: 100%;">
+      </td>
+    </tr>
+  <% end %>
+</table>

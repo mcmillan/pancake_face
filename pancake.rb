@@ -176,3 +176,17 @@ post '/generate' do
   content_type :json
   { file: "/faces/#{image_id}.jpg" }.to_json
 end
+
+get '/tests' do
+  erb :fixtures
+end
+
+get '/tests/:filename' do
+  image_id = SecureRandom.uuid
+  source   = File.expand_path("#{File.dirname(__FILE__)}/public/fixtures/#{params[:filename]}")
+
+  face      = Pancaker::Detector.new(source).detect.first
+  composite = Pancaker::Compositor.new(source, face, image_id)
+
+  redirect "/faces/#{image_id}.jpg"
+end
