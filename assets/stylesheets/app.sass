@@ -1,10 +1,37 @@
-#upload
+@import "bourbon"
+
+section
   text-align: center
   display: none
 
+  &.upload
+    display: block
+
+  &.face-selector
+    .faces
+      .face
+        display: inline-block
+        background-repeat: no-repeat
+        background-color: #eee
+        margin: 10px 20px
+
+  &.loading
+    p
+      margin-bottom: 60px
+
+    img
+      +animation(spin 3s linear infinite)
+
 #picker
   width: 791px
-  height: 410px
+  height: 500px
   border: none
   margin: 0 auto
   display: block
+
++keyframes(spin)
+  0%
+    +transform(rotate(0deg))
+
+  100%
+    +transform(rotate(360deg))

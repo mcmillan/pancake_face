@@ -2,7 +2,7 @@ require 'bundler'
 Bundler.require
 Cocaine::CommandLine.path = '/usr/local/bin'
 
-module PancakeFace
+module Pancaker
   class Face
     attr_accessor :original_width, :original_height, :coordinates
 
@@ -29,6 +29,10 @@ module PancakeFace
       self.coordinates[:bottom_right][:y] - self.coordinates[:top_left][:y]
     end
 
+    def to_json(*args)
+      { width: width, height: height, coordinates: coordinates }.to_json(*args)
+    end
+
     private
 
     def top_vertical_skew
@@ -45,16 +49,16 @@ module PancakeFace
   end
 
   class Compositor
-    def initialize(source, faces, id)
-      @id     = id
-      @source = source
-      composite_face(faces.first)
-    end
-
-    def composite_face(face)
+    def initialize(source, face, id)
+      @id        = id
+      @source    = source
       @face      = face
       @mask_path = File.expand_path("#{File.dirname(__FILE__)}/tmp/masks/#{@id}.jpg")
 
+      composite_face
+    end
+
+    def composite_face
       begin
         build_mask
 
@@ -76,8 +80,6 @@ module PancakeFace
           mask: @mask_path,
           out: "public/faces/#{@id}.jpg"
         )
-      rescue => e
-        raise e
       ensure
         FileUtils.rm_rf(@mask_path)
       end
@@ -138,38 +140,39 @@ module PancakeFace
       [@cv_face.width / 10, @cv_face.height / 10].min
     end
   end
-
-  class Generator
-    attr_accessor :id
-
-    def initialize(source)
-      @id       = SecureRandom.uuid
-      faces     = Detector.new(source).detect
-      composite = Compositor.new(source, faces, @id)
-    end
-  end
 end
 
 set :server, :puma
+enable :sessions
 
 get '/' do
   erb :index
 end
 
-post '/' do
-  path = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{SecureRandom.uuid}.jpg")
+post '/detect' do
+  image_id           = SecureRandom.uuid
+  session[:image_id] = image_id
+  path               = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
+  url                = params[:url]
 
   `wget -O #{path} #{params[:url]}`
 
-  begin
-    face = PancakeFace::Generator.new(path)
-  rescue => e
-    raise e
-  ensure
-    FileUtils.rm_rf(path)
-  end
+  faces = Pancaker::Detector.new(path).detect
+
+  session[:faces] = faces
 
   content_type :json
-  
-  { file: "/faces/#{face.id}.jpg" }.to_json
+  { image_url: url, faces: faces }.to_json
+end
+
+post '/generate' do
+  image_id = session[:image_id]
+  face_id  = params[:id].to_i
+  face     = session[:faces][face_id]
+  source   = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
+
+  composite = Pancaker::Compositor.new(source, face, image_id)
+
+  content_type :json
+  { file: "/faces/#{image_id}.jpg" }.to_json
 end

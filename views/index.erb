@@ -11,8 +11,25 @@
   <body>
     <div class="container">
       <h1 class="page-header">Tefal Pancake Face Prototype</h1>
-      <div id="upload"></div>
-      <iframe id="picker"></iframe>
+
+      <section class="loading">
+        <p class="lead">And the BAFTA for worst loading animation goes to...</p>
+        <img src="/img/loading.jpg">
+      </section>
+      
+      <section class="upload">
+        <p class="lead">Step 1: Upload Your Image</p> 
+        <iframe id="picker"></iframe>
+      </section>
+
+      <section class="face-selector">
+        <p class="lead">Step 2: Select Your Face</p>
+        <div class="faces"></div>
+      </div>
+
+      <section class="result">
+        <p class="lead">Step 3: Cooked!</p>
+      </section>
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
