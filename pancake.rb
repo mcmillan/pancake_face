@@ -84,7 +84,7 @@ module PancakeFace
     end
 
     def build_mask
-      threshold = 55
+      threshold = 60
       while !analyse_mask && threshold > 10
         create_mask(threshold)
         threshold -= 5
