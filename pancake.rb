@@ -153,16 +153,17 @@ post '/detect' do
   image_id           = SecureRandom.uuid
   session[:image_id] = image_id
   path               = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
-  url                = params[:url]
+  url                = Base64.decode64(params[:url].split('data:image/png;base64,').last)
 
-  `wget -O #{path} #{params[:url]}`
+  File.open(path, 'wb') { |f| f.write(url) }
+  # `wget -O #{path} #{params[:url]}`
 
   faces = Pancaker::Detector.new(path).detect
 
   session[:faces] = faces
 
   content_type :json
-  { image_url: url, faces: faces }.to_json
+  { faces: faces }.to_json
 end
 
 post '/generate' do
