@@ -35,6 +35,56 @@
 #   console.log error
 # )
 
+class @Facebook
+  @loggedIn: false
+
+  @init: ->
+    FB.init(
+      appId: '685230378194888'
+    )
+
+    FB.getLoginStatus((response) =>
+      @loggedIn = true if response.status == 'connected'
+    )
+
+  @login: (callback = ->) ->
+    return callback() if @loggedIn
+
+    FB.login((response) =>
+      return unless response.status == 'connected'
+      @loggedIn = true
+      callback()
+    , scope: 'user_photos')
+
+@Facebook.init()
+
+$('.js-pick-webcam').on('click', (event) ->
+  event.preventDefault()
+  $('.intro').fadeOut(300)
+  $('.pick-webcam').delay(300).fadeIn(300)
+
+  WebcamPicker.show()
+)
+
+$('.js-pick-facebook').on('click', (event) ->
+  event.preventDefault()
+
+  $('.intro').fadeOut(300)
+  $('.pick-facebook').delay(300).fadeIn(300)
+
+  Facebook.login(->
+    FacebookPicker.show()
+  )
+)
+
+$('.js-pick-instagram').on('click', (event) ->
+  event.preventDefault()
+  $('.intro').fadeOut(300)
+  $('.pick-instagram').delay(300).fadeIn(300)
+
+  InstagramPicker.show()
+)
+
 $('section.face-selector .faces').on('click', '.face', (event) ->
   event.preventDefault()
   id = $(this).data('id')
@@ -54,8 +104,35 @@ $('section.face-selector .faces').on('click', '.face', (event) ->
   )
 )
 
+detect = (imageURL) ->
+  $.ajax(
+    url: '/detect'
+    type: 'post'
+    data:
+      url: imageURL
+    success: (response) ->
+      $.each(response.faces, (id, face) ->
+        $('<a href="#" class="face panel" />')
+          .css('backgroundImage', "url(#{imageURL})")
+          .css('backgroundPositionX', "#{-face.coordinates.top_left.x}px")
+          .css('backgroundPositionY', "#{-face.coordinates.top_left.y}px")
+          .css('width', "#{face.width}px")
+          .css('height', "#{face.height}px")
+          .data('id', id)
+          .appendTo('section.face-selector .faces')
+      )
+
+      if $('section.face-selector .faces .face').length == 1
+        $('section.face-selector .faces .face:first').click()
+      else
+        $('section.loading').fadeOut(300)
+        $('section.face-selector').delay(300).fadeIn(300)
+    error: ->
+      alert 'Something went wrong. Try again?'
+  )
+
 class @WebcamPicker
-  constructor: ->
+  @show: ->
     @options =
       audio: false
       video: true
@@ -81,7 +158,7 @@ class @WebcamPicker
 
     $('.webcam-capture').on('click', @capture)
 
-  success: (stream) =>
+  @success: (stream) =>
     return unless window.webcam.context == 'webrtc'
     
     video = window.webcam.videoEl
@@ -97,10 +174,10 @@ class @WebcamPicker
       stream.stop()
       @deviceError()
 
-  deviceError: ->
+  @deviceError: ->
     alert 'Video device is not supported.'
 
-  capture: (event) =>
+  @capture: (event) =>
     event.preventDefault()
 
     if window.webcam.context == 'webrtc'
@@ -113,32 +190,84 @@ class @WebcamPicker
 
       imageURL = canvas.toDataURL()
 
-      $('section.upload').fadeOut(300)
+      $('section.pick-webcam').fadeOut(300)
       $('section.loading').delay(300).fadeIn(300, ->
-        $.ajax(
-          url: '/detect'
-          type: 'post'
-          data:
-            url: imageURL
-          success: (response) ->
-            $('section.loading').fadeOut(300)
-            $('section.face-selector').delay(300).fadeIn(300)
-
-            $.each(response.faces, (id, face) ->
-              $('<a href="#" class="face panel" />')
-                .css('backgroundImage', "url(#{imageURL})")
-                .css('backgroundPositionX', "#{-face.coordinates.top_left.x}px")
-                .css('backgroundPositionY', "#{-face.coordinates.top_left.y}px")
-                .css('width', "#{face.width}px")
-                .css('height', "#{face.height}px")
-                .data('id', id)
-                .appendTo('section.face-selector .faces')
-            )
-          error: ->
-            alert 'Something went wrong. Try again?'
-        )
+        detect(imageURL)
       )
     else if window.webcam.context == 'flash'
       alert 'wip!'
 
-new @WebcamPicker
+class @FacebookPicker
+  @show: ->
+    FB.api('/me/photos/uploaded?fields=source', (response) =>
+      @renderGrid(response.data)
+    )
+
+    $('.pick-facebook').on('click', 'a.thumbnail', (event) ->
+      event.preventDefault()
+      $('section.pick-facebook').fadeOut(300)
+      $('section.loading').delay(300).fadeIn(300, =>
+        detect($(this).find('img').attr('src'))
+      )
+    )
+
+  @renderGrid: (photos) ->
+    row = $('<div class="row">')
+    $.each(photos, (id, image) ->
+      $('<div class="col-sm-3">')
+        .append(
+          $('<a href="#" class="thumbnail">')
+            .append(
+              $('<img />').attr('src', image.source)
+            )
+        )
+        .appendTo(row)
+
+      if row.children().length == 4
+        row.appendTo('.pick-facebook')
+        row = $('<div class="row">')
+    )
+
+class @InstagramPicker
+  @accessToken: false
+
+  @show: (callback) ->
+    return callback @accessToken if @accessToken
+
+    screenX      = if typeof window.screenX != 'undefined' then window.screenX else window.screenLeft
+    screenY      = if typeof window.screenY != 'undefined' then window.screenY else window.screenTop
+    clientWidth  = if typeof window.outerWidth != 'undefined' then window.outerWidth else document.documentElement.clientWidth
+    clientHeight = if typeof window.outerHeight != 'undefined' then window.outerHeight else (document.documentElement.clientHeight - 22)
+    popupWidth   = 620
+    popupHeight  = 300
+    screenWidth  = if screenX < 0 then window.screen.width + screenX else screenX
+    popupX       = parseInt(screenWidth + ((clientWidth - popupWidth) / 2), 10)
+    popupY       = parseInt(screenY + ((clientHeight - popupHeight) / 2.5), 10)
+
+    window.open '/auth/instagram', '_blank', "width=#{popupWidth},height=#{popupHeight},left=#{popupX},top=#{popupY},scrollbars=1,location=1,toolbar=0"
+
+
+    $('.pick-instagram').on('click', 'a.thumbnail', (event) ->
+      event.preventDefault()
+      $('section.pick-instagram').fadeOut(300)
+      $('section.loading').delay(300).fadeIn(300, =>
+        detect($(this).find('img').attr('src'))
+      )
+    )
+
+  @renderGrid: (photos) ->
+    row = $('<div class="row">')
+    $.each(photos, (id, image) ->
+      $('<div class="col-sm-3">')
+        .append(
+          $('<a href="#" class="thumbnail">')
+            .append(
+              $('<img />').attr('src', image)
+            )
+        )
+        .appendTo(row)
+        
+      if row.children().length == 4
+        row.appendTo('.pick-instagram')
+        row = $('<div class="row">')
+    )

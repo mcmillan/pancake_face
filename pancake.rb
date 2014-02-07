@@ -142,6 +142,11 @@ module Pancaker
   end
 end
 
+Instagram.configure do |config|
+  config.client_id = "e65a6bc14e3d4b48a0c153b05cd6ea9e"
+  config.client_secret = "827840be7b7e44c1849c4e1bb5bd1a65"
+end
+
 set :server, :puma
 enable :sessions
 
@@ -153,10 +158,13 @@ post '/detect' do
   image_id           = SecureRandom.uuid
   session[:image_id] = image_id
   path               = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
-  url                = Base64.decode64(params[:url].split('data:image/png;base64,').last)
 
-  File.open(path, 'wb') { |f| f.write(url) }
-  # `wget -O #{path} #{params[:url]}`
+  if params[:url][0..3] == 'http'
+    `wget -O #{path} #{params[:url]}`
+  else
+    url = Base64.decode64(params[:url].split('data:image/png;base64,').last)
+    File.open(path, 'wb') { |f| f.write(url) }
+  end
 
   faces = Pancaker::Detector.new(path).detect
 
@@ -176,6 +184,18 @@ post '/generate' do
 
   content_type :json
   { file: "/faces/#{image_id}.jpg" }.to_json
+end
+
+get '/auth/instagram' do
+  redirect Instagram.authorize_url(redirect_uri: url('/auth/instagram/callback'))
+end
+
+get '/auth/instagram/callback' do
+  code_response = Instagram.get_access_token(params[:code], redirect_uri: url('/auth/instagram/callback'))
+  client        = Instagram.client(access_token: code_response.access_token)
+  media         = client.user_recent_media.map { |m| m['images']['standard_resolution']['url'] }
+
+  "<script>window.opener.InstagramPicker.renderGrid(#{media.to_json}); window.close();</script>"
 end
 
 get '/tests' do

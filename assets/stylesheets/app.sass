@@ -4,7 +4,7 @@ section
   text-align: center
   display: none
 
-  &.upload
+  &.intro
     display: block
 
   &.face-selector
@@ -21,6 +21,22 @@ section
 
     img
       +animation(spin 3s linear infinite)
+
+section.pick-webcam
+  .wrapper
+    position: relative
+
+    .helper
+      position: absolute
+      left: 0
+      right: 0
+      top: 50%
+      margin-top: -25px
+      z-index: 5
+    
+    .frame
+      position: relative
+      z-index: 10
 
 #picker
   width: 791px

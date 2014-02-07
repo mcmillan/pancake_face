@@ -10,16 +10,34 @@
 
   <body>
     <div class="container">
+      <h1 class="page-header">Tefal</h1>
+
       <section class="loading">
         <p class="lead">And the BAFTA for worst loading animation goes to...</p>
         <img src="/img/loading.jpg">
       </section>
       
-      <section class="upload">
+      <section class="intro">
         <p class="lead">Step 1: Upload Your Image</p> 
-        <div id="webcam"></div>
+
+        <a href="#" class="btn btn-default js-pick-webcam">Webcam</a>
+        <a href="#" class="btn btn-default js-pick-facebook">Facebook</a>
+        <a href="#" class="btn btn-default js-pick-instagram">Instagram</a>
+        <a href="#" class="btn btn-default js-pick-computer">Computer</a>
+      </section>
+
+      <section class="pick-webcam">
+        <div class="wrapper">
+          <p class="text-muted helper">Please grant access to your webcam.</p>
+          <div id="webcam" class="frame"></div>
+        </div>
+
         <a href="#" class="btn btn-primary btn-large webcam-capture">Capture</a>
       </section>
+
+      <section class="pick-facebook"></section>
+      
+      <section class="pick-instagram"></section>
 
       <section class="face-selector">
         <p class="lead">Step 2: Select Your Face</p>
@@ -32,6 +50,7 @@
     </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="//connect.facebook.net/en_GB/all.js"></script>
     <script src="/js/vendor/getUserMedia.min.js"></script>
     <script src="/js/app.js"></script>
   </body>

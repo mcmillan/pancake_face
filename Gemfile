@@ -5,6 +5,10 @@ ruby '2.1.0'
 gem 'sinatra', '~> 1.4.4'
 gem 'sinatra-contrib', '~> 1.4.2', require: 'sinatra/reloader'
 
+# Social images
+gem 'instagram'
+gem 'koala'
+
 # Image manipulation
 gem 'ruby-opencv', '~> 0.0.12', require: 'opencv'
 gem 'cocaine', '~> 0.5.3'
