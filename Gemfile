@@ -4,11 +4,11 @@ ruby '2.1.0'
 # Sinatra
 gem 'sinatra', '~> 1.4.4'
 gem 'sinatra-contrib', '~> 1.4.2', require: 'sinatra/reloader'
-gem 'dotenv'
+gem 'dotenv', '~> 0.9.0'
 
 # Social images
-gem 'instagram'
-gem 'koala'
+gem 'instagram', '~> 0.10.0'
+gem 'koala', '~> 1.8.0'
 
 # Image manipulation
 gem 'ruby-opencv', '~> 0.0.12', require: 'opencv'
@@ -23,4 +23,4 @@ gem 'coffee-script', '~> 2.2.0'
 
 # Deployment
 gem 'puma', '~> 2.7.1'
-gem 'foreman'
+gem 'foreman', '~> 0.63.0'

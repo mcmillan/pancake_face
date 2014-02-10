@@ -87,10 +87,10 @@ DEPENDENCIES
   cocaine (~> 0.5.3)
   coffee-script (~> 2.2.0)
   colorscore (~> 0.0.4)
-  dotenv
-  foreman
-  instagram
-  koala
+  dotenv (~> 0.9.0)
+  foreman (~> 0.63.0)
+  instagram (~> 0.10.0)
+  koala (~> 1.8.0)
   puma (~> 2.7.1)
   ruby-opencv (~> 0.0.12)
   sass (~> 3.2.12)

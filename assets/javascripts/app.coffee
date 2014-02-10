@@ -40,7 +40,7 @@ class @Facebook
 
   @init: ->
     FB.init(
-      appId: '685230378194888'
+      appId: Pancake.Config.facebookAppId
     )
 
     FB.getLoginStatus((response) =>

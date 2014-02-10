@@ -144,8 +144,8 @@ module Pancaker
 end
 
 Instagram.configure do |config|
-  config.client_id = "e65a6bc14e3d4b48a0c153b05cd6ea9e"
-  config.client_secret = "827840be7b7e44c1849c4e1bb5bd1a65"
+  config.client_id = ENV['INSTAGRAM_APP_ID']
+  config.client_secret = ENV['INSTAGRAM_APP_SECRET']
 end
 
 set :server, :puma
