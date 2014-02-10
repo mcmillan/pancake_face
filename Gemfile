@@ -4,6 +4,7 @@ ruby '2.1.0'
 # Sinatra
 gem 'sinatra', '~> 1.4.4'
 gem 'sinatra-contrib', '~> 1.4.2', require: 'sinatra/reloader'
+gem 'dotenv'
 
 # Social images
 gem 'instagram'

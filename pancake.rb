@@ -1,5 +1,6 @@
 require 'bundler'
 Bundler.require
+Dotenv.load
 Cocaine::CommandLine.path = '/usr/local/bin'
 
 module Pancaker

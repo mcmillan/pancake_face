@@ -87,6 +87,7 @@ DEPENDENCIES
   cocaine (~> 0.5.3)
   coffee-script (~> 2.2.0)
   colorscore (~> 0.0.4)
+  dotenv
   foreman
   instagram
   koala

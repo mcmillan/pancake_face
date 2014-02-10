@@ -1,1 +1,1 @@
-web: RACK_ENV=production PORT=1337 bundle exec rackup
+web: bundle exec rackup -p 1337 -E production
