@@ -58,4 +58,5 @@ Icon
 # proportion of contributors will probably not be using SublimeText
 # *.sublime-project
 
-public/faces
+public/faces/*.jpg
+public/uploads/*.jpg

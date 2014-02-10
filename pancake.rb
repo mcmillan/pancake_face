@@ -155,30 +155,40 @@ get '/' do
 end
 
 post '/detect' do
-  image_id           = SecureRandom.uuid
+  image_id           = session[:image_id] || SecureRandom.uuid
   session[:image_id] = image_id
   path               = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
+  public_path        = File.expand_path("#{File.dirname(__FILE__)}/public/uploads/#{image_id}.jpg")
 
-  if params[:url][0..3] == 'http'
-    `wget -O #{path} #{params[:url]}`
-  else
+  case params[:type]
+  when 'facebook', 'instagram'
+    Cocaine::CommandLine.new('wget', '-O :out :in').run(out: path, in: params[:url])
+  when 'webcam'
     url = Base64.decode64(params[:url].split('data:image/png;base64,').last)
     File.open(path, 'wb') { |f| f.write(url) }
+  when 'computer'
+    File.open(path, 'wb') { |f| f.write(params[:file][:tempfile].read)}
   end
 
-  faces = Pancaker::Detector.new(path).detect
+  begin
+    Cocaine::CommandLine.new('convert', ':in :out').run(in: path, out: public_path)
+  ensure
+    FileUtils.rm_rf(path)
+  end
+
+  faces = Pancaker::Detector.new(public_path).detect
 
   session[:faces] = faces
 
   content_type :json
-  { faces: faces }.to_json
+  { faces: faces, url: url("/uploads/#{image_id}.jpg") }.to_json
 end
 
 post '/generate' do
   image_id = session[:image_id]
   face_id  = params[:id].to_i
   face     = session[:faces][face_id]
-  source   = File.expand_path("#{File.dirname(__FILE__)}/tmp/uploads/#{image_id}")
+  source   = File.expand_path("#{File.dirname(__FILE__)}/public/uploads/#{image_id}.jpg")
 
   composite = Pancaker::Compositor.new(source, face, image_id)
 

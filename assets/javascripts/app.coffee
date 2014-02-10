@@ -85,6 +85,18 @@ $('.js-pick-instagram').on('click', (event) ->
   InstagramPicker.show()
 )
 
+$('.js-pick-computer input').fileupload(
+  dataType: 'json'
+  url: '/detect'
+  formData:
+    type: 'computer'
+  add: (event, data) ->
+    $('.intro').fadeOut(300)
+    $('.loading').delay(300).fadeIn(300, -> data.submit())
+  done: (event, data) ->
+    handleDetectionResponse(data.response().result)
+)
+
 $('section.face-selector .faces').on('click', '.face', (event) ->
   event.preventDefault()
   id = $(this).data('id')
@@ -104,29 +116,32 @@ $('section.face-selector .faces').on('click', '.face', (event) ->
   )
 )
 
-detect = (imageURL) ->
+handleDetectionResponse = (response) ->
+  $.each(response.faces, (id, face) ->
+    $('<a href="#" class="face panel" />')
+      .css('backgroundImage', "url(#{response.url})")
+      .css('backgroundPositionX', "#{-face.coordinates.top_left.x}px")
+      .css('backgroundPositionY', "#{-face.coordinates.top_left.y}px")
+      .css('width', "#{face.width}px")
+      .css('height', "#{face.height}px")
+      .data('id', id)
+      .appendTo('section.face-selector .faces')
+  )
+
+  if $('section.face-selector .faces .face').length == 1
+    $('section.face-selector .faces .face:first').click()
+  else
+    $('section.loading').fadeOut(300)
+    $('section.face-selector').delay(300).fadeIn(300)
+
+detect = (type, imageURL) ->
   $.ajax(
     url: '/detect'
     type: 'post'
     data:
       url: imageURL
-    success: (response) ->
-      $.each(response.faces, (id, face) ->
-        $('<a href="#" class="face panel" />')
-          .css('backgroundImage', "url(#{imageURL})")
-          .css('backgroundPositionX', "#{-face.coordinates.top_left.x}px")
-          .css('backgroundPositionY', "#{-face.coordinates.top_left.y}px")
-          .css('width', "#{face.width}px")
-          .css('height', "#{face.height}px")
-          .data('id', id)
-          .appendTo('section.face-selector .faces')
-      )
-
-      if $('section.face-selector .faces .face').length == 1
-        $('section.face-selector .faces .face:first').click()
-      else
-        $('section.loading').fadeOut(300)
-        $('section.face-selector').delay(300).fadeIn(300)
+      type: type
+    success: handleDetectionResponse
     error: ->
       alert 'Something went wrong. Try again?'
   )
@@ -192,7 +207,7 @@ class @WebcamPicker
 
       $('section.pick-webcam').fadeOut(300)
       $('section.loading').delay(300).fadeIn(300, ->
-        detect(imageURL)
+        detect('webcam', imageURL)
       )
     else if window.webcam.context == 'flash'
       alert 'wip!'
@@ -207,7 +222,7 @@ class @FacebookPicker
       event.preventDefault()
       $('section.pick-facebook').fadeOut(300)
       $('section.loading').delay(300).fadeIn(300, =>
-        detect($(this).find('img').attr('src'))
+        detect('facebook', $(this).find('img').attr('src'))
       )
     )
 
@@ -251,7 +266,7 @@ class @InstagramPicker
       event.preventDefault()
       $('section.pick-instagram').fadeOut(300)
       $('section.loading').delay(300).fadeIn(300, =>
-        detect($(this).find('img').attr('src'))
+        detect('instagram', $(this).find('img').attr('src'))
       )
     )
 
