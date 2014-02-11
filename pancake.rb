@@ -73,9 +73,9 @@ module Pancaker
 
         # Composite
         Cocaine::CommandLine.new('convert', %q[
-          sources/pancake.jpg \
+          sources/superior.jpg \
           sources/burn.jpg \
-          \( -background black -blur 0x1 -noise 0x3 -splice 128x80+0+0 :mask \) \
+          \( -background black -blur 0x1 -noise 0x3 -splice 190x50+0+0 :mask \) \
           -composite :out
         ].strip).run(
           mask: @mask_path,
@@ -98,7 +98,7 @@ module Pancaker
       # Initial conversion
       Cocaine::CommandLine.new('convert', %q[
         :in \
-        -crop :crop -threshold :threshold% -colors 2 -colorspace gray -normalize -negate -resize 400x400 \
+        -crop :crop -threshold :threshold% -colors 2 -colorspace gray -normalize -negate -resize 350x350 \
         :out
       ].strip).run(
         crop: "#{@face.width}x#{@face.height}+#{@face.coordinates[:top_left][:x]}+#{@face.coordinates[:top_left][:y]}",
