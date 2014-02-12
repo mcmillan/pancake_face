@@ -206,7 +206,7 @@ get '/auth/instagram/callback' do
   client        = Instagram.client(access_token: code_response.access_token)
   media         = client.user_recent_media.map { |m| m['images']['standard_resolution']['url'] }
 
-  "<script>window.opener.InstagramPicker.renderGrid(#{media.to_json}); window.close();</script>"
+  "<script>window.opener.Pancake.InstagramPicker.popupCallback(#{media.to_json}); window.close();</script>"
 end
 
 get '/tests' do
