@@ -65,7 +65,7 @@ module Pancaker
 
         # Vignette
         Cocaine::CommandLine.new('mogrify', %q[
-          -background black -vignette 30x65000 \
+          -background black -vignette 40x65000 \
           :file
         ].strip).run(
           file: @mask_path
@@ -82,29 +82,29 @@ module Pancaker
           out: "public/faces/#{@id}.jpg"
         )
       ensure
-        FileUtils.rm_rf(@mask_path)
+        # FileUtils.rm_rf(@mask_path)
       end
     end
 
     def build_mask
-      threshold = 60
+      threshold = 95
       while !analyse_mask && threshold > 10
         create_mask(threshold)
-        threshold -= 5
+        threshold -= 3
       end
     end
 
     def create_mask(threshold)
       # Initial conversion
-      Cocaine::CommandLine.new('convert', %q[
+      puts Cocaine::CommandLine.new('convert', %q[
         :in \
-        -crop :crop -threshold :threshold% -colors 2 -colorspace gray -normalize -negate -resize 340x340 \
+        -crop :crop -threshold :threshold -normalize -colorspace gray -negate -resize 340x340 \
         :out
       ].strip).run(
         crop: "#{@face.width}x#{@face.height}+#{@face.coordinates[:top_left][:x]}+#{@face.coordinates[:top_left][:y]}",
         in: @source,
         out: @mask_path,
-        threshold: threshold.to_s
+        threshold: "#{threshold}%"
       )
     end
 
@@ -114,8 +114,13 @@ module Pancaker
       histogram = Colorscore::Histogram.new(@mask_path)
       palette   = Colorscore::Palette.from_hex(['ffffff', '000000'])
       scores    = palette.scores(histogram.scores, 1)
+      whiteness = 100
 
-      scores.first[1].html != '#ffffff'
+      scores.each do |score|
+        whiteness = score[0] if score[1].html == '#ffffff'
+      end
+
+      whiteness < 0.475
     end
   end
 
@@ -152,6 +157,7 @@ set :server, :puma
 enable :sessions
 
 get '/' do
+  session.destroy
   erb :index
 end
 
