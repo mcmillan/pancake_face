@@ -95,16 +95,15 @@ module Pancaker
     end
 
     def create_mask(threshold)
-      # Initial conversion
-      puts Cocaine::CommandLine.new('convert', %q[
+      Cocaine::CommandLine.new('convert', %q[
         :in \
-        -crop :crop -threshold :threshold -normalize -colorspace gray -negate -resize 340x340 \
+        -crop :crop -resize 340x340 -contrast-stretch 1%x0.5% -threshold :threshold -negate \
         :out
       ].strip).run(
-        crop: "#{@face.width}x#{@face.height}+#{@face.coordinates[:top_left][:x]}+#{@face.coordinates[:top_left][:y]}",
         in: @source,
         out: @mask_path,
-        threshold: "#{threshold}%"
+        threshold: "#{threshold}%",
+        crop: "#{@face.width}x#{@face.height}+#{@face.coordinates[:top_left][:x]}+#{@face.coordinates[:top_left][:y]}"
       )
     end
 
@@ -120,7 +119,7 @@ module Pancaker
         whiteness = score[0] if score[1].html == '#ffffff'
       end
 
-      whiteness < 0.475
+      whiteness < 0.55
     end
   end
 
