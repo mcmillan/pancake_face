@@ -31,6 +31,8 @@ class @Pancake.InstagramPicker
     )
 
   @renderGrid: (photos) ->
+    $('.state.state-pick-instagram .grid').empty()
+    
     row = $('<div class="row">')
     $.each(photos, (id, image) ->
       $('<div class="col-sm-3">')
@@ -43,7 +45,7 @@ class @Pancake.InstagramPicker
         .appendTo(row)
         
       if row.children().length == 4
-        row.appendTo('.state.state-pick-instagram')
+        row.appendTo('.state.state-pick-instagram .grid')
         row = $('<div class="row">')
     )
 

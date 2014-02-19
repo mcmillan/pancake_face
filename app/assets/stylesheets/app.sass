@@ -5,20 +5,8 @@
     min-height: 0
   
   .state-wrapper
-    background: #fff
-    border-radius: 3px
-    max-width: 640px
-    min-height: 0
+    max-width: 700px
     margin: 0 auto
-    padding: 20px
-    +box-shadow(0 2px 6px rgba(0, 0, 0, 0.4))
-      
-    h1,
-    h2,
-    h3,
-    h4,
-    p
-      color: #000
 
     .state
       text-align: center
@@ -64,6 +52,11 @@
             position: relative
             z-index: 10
 
+      &.state-pick-facebook,
+      &.state-pick-instagram
+        p.lead
+          margin-bottom: 22px
+
 .step-2
   display: none
 
@@ -88,3 +81,9 @@
         padding: 6px 12px
         margin: 0 4px
         +box-shadow(none)
+
+a.thumbnail
+  margin-bottom: 15px
+
+  &:hover
+    border-color: transparent

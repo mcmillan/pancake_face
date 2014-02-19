@@ -41,6 +41,8 @@ class @Pancake.FacebookPicker
     )
 
   @renderGrid: (photos) ->
+    $('.state.state-pick-facebook .grid').empty()
+
     row = $('<div class="row">')
     $.each(photos, (id, image) ->
       $('<div class="col-sm-3">')
@@ -53,7 +55,7 @@ class @Pancake.FacebookPicker
         .appendTo(row)
 
       if row.children().length == 4
-        row.appendTo('.state.state-pick-facebook')
+        row.appendTo('.state.state-pick-facebook .grid')
         row = $('<div class="row">')
     )
 

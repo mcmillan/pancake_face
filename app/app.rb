@@ -29,6 +29,7 @@ module Pancaker
     end
 
     get '/' do
+      puts absolute_path("ffff")
       erb :index
     end
 
