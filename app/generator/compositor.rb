@@ -28,13 +28,14 @@ module Pancaker
 
         Cocaine::CommandLine.new('convert', %q[
           :pan \
-          app/assets/composition/burn.jpg \
+          :burn \
           \( -background black -blur 0x1 -noise 0x3 -splice 200x55+0+0 :mask \) \
           -composite :out
         ].strip).run(
           mask: "tmp/masks/#{@filename}",
           out: "public/faces/#{@filename}",
-          pan: "app/assets/composition/#{@pan}.jpg"
+          burn: "app/assets/composition/burns/#{@pan}.jpg",
+          pan: "app/assets/composition/pans/#{@pan}.jpg"
         )
       ensure
         FileUtils.rm_rf("tmp/crops/#{@filename}", secure: true)
