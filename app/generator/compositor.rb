@@ -29,7 +29,7 @@ module Pancaker
         Cocaine::CommandLine.new('convert', %q[
           :pan \
           :burn \
-          \( -background black -blur 0x1 -noise 0x3 -splice 210x50+0+0 :mask \) \
+          \( -background black -blur 0x1 -noise 0x3 -splice 202x51+0+0 :mask \) \
           -composite :out
         ].strip).run(
           mask: "tmp/masks/#{@filename}",
