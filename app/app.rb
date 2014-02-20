@@ -118,26 +118,24 @@ module Pancaker
       return error('Invalid email address supplied.') unless email.include?('@')
       return error('An error occurred uploading your selfie. Please try again later.') unless image_id
  
-      key    = 'key'
-      secret = 'secret'
+      key    = 'josh'
+      secret = 'dfnsdkjfhsky48ry4oh34ry398h'
+
+      # Create initial user
       data   = {
-        name: name,
-        email: email,
         content: Base64.encode64(File.read(public_face_path("#{image_id}.jpg")))
       }
-      epoch  = Time.now.to_i
+      epoch  = Time.now.to_i.to_s
 
-      hash = Digest::SHA256.new
-      hash << {
+      json = {
         APIKEY: key,
         APISECRET: secret,
-        data: data,
+        data: data.to_json,
         epoch: epoch
       }.to_json
-      hash = hash.hexdigest
+      hash = Digest::SHA256.hexdigest(json)
 
       entry = HTTParty.post('http://test.tefal.pancake.yomego.com/api/entry', {
-        format: :json,
         query: {
           APIKEY: key,
           hash: hash,
@@ -150,6 +148,34 @@ module Pancaker
       })
 
       return error(entry.parsed_response['message']) if entry.code < 200 or entry.code > 299
+
+      data   = {
+        name: name,
+        email: email
+      }
+      epoch  = Time.now.to_i.to_s
+
+      json = {
+        APIKEY: key,
+        APISECRET: secret,
+        data: data.to_json,
+        epoch: epoch
+      }.to_json
+      hash = Digest::SHA256.hexdigest(json)
+
+      update = HTTParty.put("http://test.tefal.pancake.yomego.com/api/entry/#{entry.parsed_response['data']['Id']}", {
+        query: {
+          APIKEY: key,
+          hash: hash,
+          epoch: epoch
+        },
+        body: data.to_json,
+        headers: {
+          'Content-Type' => 'application/json'
+        }
+      })
+
+      return error(update.parsed_response['message']) if update.code < 200 or update.code > 299
 
       status 204
     end

@@ -15,6 +15,17 @@ class @Pancake.Detector
 
 
   @success: (response) ->
+    $('.state.state-intro .alert').remove()
+
+    if response.faces.length == 0
+      $('<div class="alert alert-danger" />')
+        .text("We weren't able to find a face in that photo. Try again?")
+        .insertBefore('.state.state-intro .js-pick-webcam')
+        $('.state.state-loading').fadeOut(300).promise().done(->
+          $('.state.state-intro').delay(300).fadeIn(300)
+        )
+      return
+
     $.each(response.faces, (id, face) ->
       $('<a href="#" class="face panel" />')
         .css('backgroundImage', "url(#{response.url})")
