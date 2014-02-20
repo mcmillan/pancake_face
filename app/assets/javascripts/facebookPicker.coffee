@@ -4,6 +4,7 @@ class @Pancake.FacebookPicker
   @init: ->
     FB.init(
       appId: Pancake.Config.facebookAppId
+      xfbml: true
     )
 
     FB.getLoginStatus((response) =>

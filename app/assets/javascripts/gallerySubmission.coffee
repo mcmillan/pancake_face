@@ -19,7 +19,7 @@ class @Pancake.GallerySubmission
 
     $('.gallery-submission form').fadeTo(300, 0.5).promise().done(=>
       $.ajax(
-        url: '/gallery'
+        url: '/gallery/competition'
         type: 'post'
         data:
           name: name
@@ -30,7 +30,7 @@ class @Pancake.GallerySubmission
       )
     )
 
-  @success: ->
+  @success: (response) ->
     $('.gallery-submission form').slideUp(300)
     $('.gallery-submission .success').slideDown(300)
 
