@@ -32,15 +32,15 @@ module Pancaker
     private
 
     def top_vertical_skew
-      (self.original_height / 3).round
+      (self.original_height / 1.5).round
     end
 
     def bottom_vertical_skew
-      (self.original_height / 5).round
+      (self.original_height / 4).round
     end
 
     def horizontal_skew
-      (self.original_width / 10).round
+      (self.original_width / 7).round
     end
   end
 end
