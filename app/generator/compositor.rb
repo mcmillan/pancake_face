@@ -35,7 +35,7 @@ module Pancaker
           mask: "tmp/masks/#{@filename}",
           out: "public/faces/#{@filename}",
           burn: "app/assets/composition/burns/#{@pan}.jpg",
-          pan: "app/assets/composition/pans/#{@pan}.png"
+          pan: "app/assets/composition/pans/#{@pan}.jpg"
         )
       ensure
         FileUtils.rm_rf("tmp/crops/#{@filename}", secure: true)
