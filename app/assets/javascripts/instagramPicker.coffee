@@ -48,5 +48,6 @@ class @Pancake.InstagramPicker
         row.appendTo('.state.state-pick-instagram .grid')
         row = $('<div class="row">')
     )
+    row.appendTo('.state.state-face-selector .faces')
 
     $('.state.state-pick-instagram').fadeIn(300)

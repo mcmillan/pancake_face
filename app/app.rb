@@ -42,6 +42,22 @@ module Pancaker
       erb :index
     end
 
+    get '/detected/:id' do
+      id = params[:id].to_i
+      
+      return pass unless defined?(session[:faces][id]) and defined?(session[:image_id])
+
+      face = session[:faces][id]
+
+      image = MiniMagick::Image.open(public_upload_path("#{session[:image_id]}.jpg"))
+      image.combine_options do |i|
+        i.crop "#{face.width}x#{face.height}+#{face.coordinates[:top_left][:x]}+#{face.coordinates[:top_left][:y]}"
+        i.resize "^200x200"
+      end
+      content_type :jpeg
+      image.to_blob
+    end
+
     post '/detect' do
       image_id           = SecureRandom.uuid
       session[:image_id] = image_id

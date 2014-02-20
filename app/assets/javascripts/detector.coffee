@@ -26,16 +26,25 @@ class @Pancake.Detector
         )
       return
 
+    $('.state.state-face-selector .faces').empty()
+
+    row = $('<div class="row">')
     $.each(response.faces, (id, face) ->
-      $('<a href="#" class="face panel" />')
-        .css('backgroundImage', "url(#{response.url})")
-        .css('backgroundPositionX', "#{-face.coordinates.top_left.x}px")
-        .css('backgroundPositionY', "#{-face.coordinates.top_left.y}px")
-        .css('width', "#{face.width}px")
-        .css('height', "#{face.height}px")
-        .data('id', id)
-        .appendTo('.state.state-face-selector .faces')
+      $('<div class="col-sm-4">')
+        .append(
+          $('<a href="#" class="thumbnail face">')
+            .append(
+              $('<img />').attr('src', "/detected/#{id}")
+            )
+            .data('id', id)
+        )
+        .appendTo(row)
+
+      if row.children().length == 3
+        row.appendTo('.state.state-face-selector .faces')
+        row = $('<div class="row">')
     )
+    row.appendTo('.state.state-face-selector .faces')
 
     if $('.state.state-face-selector .faces .face').length == 1
       $('.state.state-face-selector .faces .face:first').click()

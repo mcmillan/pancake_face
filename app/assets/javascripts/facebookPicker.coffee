@@ -58,6 +58,7 @@ class @Pancake.FacebookPicker
         row.appendTo('.state.state-pick-facebook .grid')
         row = $('<div class="row">')
     )
+    row.appendTo('.state.state-face-selector .faces')
 
     $('.state.state-loading').fadeOut(300).promise().done(->
       $('.state.state-pick-facebook').fadeIn(300)
