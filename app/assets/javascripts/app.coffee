@@ -3,10 +3,12 @@
 #= require webcamPicker
 #= require instagramPicker
 #= require generator
+#= require gallerySubmission
 
 @Pancake.FacebookPicker.init()
 @Pancake.InstagramPicker.init()
 @Pancake.Generator.init()
+@Pancake.GallerySubmission.init()
 
 $('.js-pick-webcam').on('click', @Pancake.WebcamPicker.show)
 $('.js-pick-facebook').on('click', @Pancake.FacebookPicker.show)
@@ -25,18 +27,35 @@ $('.js-pick-computer input').fileupload(
     Pancake.Detector.success(data.response().result)
 )
 
-$('section.step-2 .js-step-back').on('click', (event) ->
+$('section.customise .js-step-back').on('click', (event) ->
   event.preventDefault()
-  $('section.step-1 .state')
-    .hide()
-    .filter('.state-intro')
-    .show()
 
-  $('.steps-list li[data-step=2]').removeClass('selected')
+  # This is an extremely unpleasant way of handling state, refactor
+  if $('.steps-list li[data-step=3]').hasClass('selected')
+    $('.customise .tweaker-wrapper .tweaker, section.customise .js-step-next').fadeIn(500)
+    $('.customise .pan-switcher').slideDown(500)
+    $('.gallery-submission, .customise .sharing').slideUp(500)
+    $('.steps-list li[data-step=3]').removeClass('selected')
+  else
+    $('section.upload .state')
+      .hide()
+      .filter('.state-intro')
+      .show()
 
-  $('section.step-1 .state.state-face-selector .faces').empty()
+    $('.steps-list li[data-step=2]').removeClass('selected')
 
-  $('section.step-2').fadeOut(300).promise().done(->
-    $('section.step-1').fadeIn(300)
-  )
+    $('section.upload .state.state-face-selector .faces').empty()
+
+    $('section.customise').fadeOut(300).promise().done(->
+      $('section.upload').fadeIn(300)
+    )
+)
+
+$('section.customise .js-step-next').on('click', (event) ->
+  event.preventDefault()
+  $('.customise .tweaker-wrapper .tweaker, section.customise .js-step-next').fadeOut(500)
+  $('.customise .pan-switcher').slideUp(500)
+  $('.gallery-submission, .customise .sharing').slideDown(500)
+  $('.steps-list li[data-step=3]').addClass('selected')
+  Pancake.Generator.focusImage()
 )

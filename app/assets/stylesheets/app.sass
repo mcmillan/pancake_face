@@ -1,6 +1,6 @@
 @import "bourbon"
 
-.step-1
+.upload
   .plugin-wrapper
     min-height: 0
   
@@ -57,11 +57,24 @@
         p.lead
           margin-bottom: 22px
 
-.step-2
+.customise
   display: none
 
   .tweaker-wrapper 
     position: relative
+
+    .loading
+      position: absolute
+      top: 50%
+      margin-top: -45px
+      left: 50%
+      margin-left: -40px
+      z-index: 1
+
+    > img
+      position: relative
+      z-index: 2
+
     .tweaker
       position: absolute
       width: 300px
@@ -72,6 +85,7 @@
       border-radius: 4px 4px 0 0
       background: #000
       background: rgba(0, 0, 0, 0.3)
+      z-index: 3
 
       > div
         padding-top: 6px
@@ -81,6 +95,15 @@
         padding: 6px 12px
         margin: 0 4px
         +box-shadow(none)
+
+  .sharing
+    display: none
+
+.gallery-submission
+  display: none
+
+  .success
+    display: none
 
 a.thumbnail
   margin-bottom: 15px

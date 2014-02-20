@@ -5,8 +5,8 @@ class @Pancake.Generator
 
   @init: ->
     $('.state.state-face-selector .faces').on('click', '.face', @chooseFaceFromSelector)
-    $('section.step-2 .pan-selector-list li figure').on('click', @changePan)
-    $('section.step-2 .tweaker-wrapper .btn-tweak').on('click', @changeSway)
+    $('section.customise .pan-selector-list li figure').on('click', @changePan)
+    $('section.customise .tweaker-wrapper .btn-tweak').on('click', @changeSway)
 
   @chooseFaceFromSelector: (event) =>
     event.preventDefault()
@@ -17,7 +17,7 @@ class @Pancake.Generator
     )
 
   @focusImage: ->
-    $('html, body').animate(scrollTop: 225)
+    $('html, body').animate(scrollTop: $('.customise').offset().top, 500)
 
   @changePan: (event) =>
     event.preventDefault()
@@ -38,7 +38,10 @@ class @Pancake.Generator
 
   @generate: ->
     @processing = true
-    $('section.step-2 .tweaker-wrapper').fadeTo(300, 0.5) if $('section.step-2 .tweaker-wrapper').is(':visible')
+    if $('section.customise .tweaker-wrapper').is(':visible')
+      $('section.customise .tweaker-wrapper .tweaker, section.customise .tweaker-wrapper > img')
+        .fadeTo(300, 0) 
+
     $('.state.state-loading').fadeIn(300).promise().done(=>
       $.ajax(
         url: '/generate'
@@ -53,29 +56,31 @@ class @Pancake.Generator
     )
 
   @success: (response) =>
-    $('section.step-2 .tweaker-wrapper')
-      .fadeTo(300, 1)
-      .find('img')
+    $('section.customise .tweaker-wrapper')
+      .find('.tweaker, > img')
+        .fadeTo(300, 1)
+      .end()
+      .find('> img')
         .attr('src', response.file)
       
 
-    $('section.step-2 .js-pan-name div')
+    $('section.customise .js-pan-name div')
       .hide()
       .filter('[data-pan="' + response.pan + '"]')
       .show()
 
-    $('section.step-2 .tweaker-wrapper .js-tweak-darker')[if response.canDarken then 'show' else 'hide']()
-    $('section.step-2 .tweaker-wrapper .js-tweak-lighter')[if response.canLighten then 'show' else 'hide']()
+    $('section.customise .tweaker-wrapper .js-tweak-darker')[if response.canDarken then 'show' else 'hide']()
+    $('section.customise .tweaker-wrapper .js-tweak-lighter')[if response.canLighten then 'show' else 'hide']()
 
-    $('section.step-2 .pan-selector-list li figure')
+    $('section.customise .pan-selector-list li figure')
       .removeClass('selected')
       .filter('[data-pan="' + response.pan + '"]')
       .addClass('selected')
 
     $('.steps-list li[data-step=2]').addClass('selected')
 
-    $('section.step-1').fadeOut(300).promise().done(=>
-      $('section.step-2').fadeIn(300)
+    $('section.upload').fadeOut(300).promise().done(=>
+      $('section.customise').fadeIn(300)
       @processing = false
     )
 

@@ -42,7 +42,7 @@
 
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav main-nav">
-            <li><a href="Gallery.html">View gallery</a></li>
+            <li><a href="<%= ENV['STATIC_URL'] %>/en/competition/gallery">View gallery</a></li>
             <li class="active"><a href="entry-step-1.html">Enter now</a></li>
           </ul>
 
@@ -54,27 +54,7 @@
       </div>
     </div>
 
-    <div class="bg-grey">
-      <div class="container text-center text-white">
-        <div class="row">
-          <h1 class="imgs-header col-md-12"><img src="<%= ENV['STATIC_URL'] %>/content/tefal/img/page-title-left.png" alt="" /> Be the face of Pancake Day! 
-          <img src="<%= ENV['STATIC_URL'] %>/content/tefal/img/page-title-right.png" alt="" /></h1>
-        </div>
-
-        <p class="steps-counter visible-xs"><strong>Step 1 of 3</strong> - Upload your image</p>
-        <div class="row">
-          <div class="col-lg-8 col-lg-push-2 hidden-xs">
-            <ul class="unstyled steps-list clearfix">
-              <li class="selected" data-step="1"><span>1. Upload your image</span></li>
-              <li class="mid-step" data-step="2"><span>2. Choose your pan</span></li>
-              <li data-step="3"><span>3. Get cooking!</span></li>
-            </ul>
-          </div>
-        </div>
-
-        <%= erb :app %>
-      </div>
-    </div>
+    <%= erb :app %>
 
     <div class="site-footer">
       <footer class="container clearfix">

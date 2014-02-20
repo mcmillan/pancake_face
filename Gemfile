@@ -21,7 +21,10 @@ gem 'sprockets', '~> 2.10.0'
 gem 'sass', '~> 3.2.12'
 gem 'bourbon', '~> 3.1.8'
 gem 'coffee-script', '~> 2.2.0'
-gem 'uglifier'
+gem 'uglifier', '~> 2.4.0'
+
+# Gallery
+gem 'httparty', '~> 0.13.0'
 
 # Deployment
 gem 'puma', '~> 2.7.1'

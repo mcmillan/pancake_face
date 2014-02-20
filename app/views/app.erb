@@ -1,123 +1,196 @@
-<section class="step-1">
-  <div class="plugin-wrapper">
-    <div class="state-wrapper">
-      <div class="state state-intro">
-        <h3 class="font-source-sans">Choose a photo of your face to be baked by our Pancake Selfie Maker.</h3> 
-        <p class="lead">For best results, use a pic with only one face, ideally with a clear background.</p>
-        <br /><br />
+<div class="bg-grey">
+  <div class="container text-center text-white">
+    <div class="row">
+      <h1 class="imgs-header col-md-12"><img src="<%= ENV['STATIC_URL'] %>/content/tefal/img/page-title-left.png" alt="" /> Be the face of Pancake Day! 
+      <img src="<%= ENV['STATIC_URL'] %>/content/tefal/img/page-title-right.png" alt="" /></h1>
+    </div>
 
-        <a href="#" class="btn btn-block btn-primary js-pick-webcam hidden-xs">Webcam</a>
-        <br />
-        <a href="#" class="btn btn-block btn-primary js-pick-facebook">Facebook</a>
-        <br />
-        <a href="#" class="btn btn-block btn-primary js-pick-instagram">Instagram</a>
-        <br />
-        <a href="#" class="btn btn-block btn-primary js-pick-computer">
-          <input type="file" name="file">
-          <span class="hidden-xs">Computer</span>
-          <span class="visible-xs">Device</span>
-        </a>
-      </div>
-
-      <div class="state state-pick-webcam">
-        <div class="wrapper">
-          <p class="text-muted helper">Please grant access to your webcam.</p>
-          <div id="webcam" class="frame"></div>
-        </div>
-
-        <a href="#" class="btn btn-primary btn-large js-webcam-capture">Capture</a>
-      </div>
-
-      <div class="state state-pick-facebook">
-        <h3>Here's all your photos from Facebook</h3>
-        <p class="lead">Click the one you'd like to use.</p>
-        <div class="grid"></div>
-      </div>
-
-      <div class="state state-pick-instagram">
-        <h3>Here's all your photos from Instagram</h3>
-        <p class="lead">Click the one you'd like to use.</p>
-        <div class="grid"></div>
-      </div>
-
-      <div class="state state-face-selector">
-        <h3>We've found multiple faces in your photo</h3>
-        <p class="lead">Click the one which is you.</p>
-        <div class="faces"></div>
-      </div>
-      
-      <div class="state state-loading">
-        <h3>Loading...</h3>
-        <br />
-        <img src="/img/loading.gif">
+    <p class="steps-counter visible-xs"><strong>Step 1 of 3</strong> - Upload your image</p>
+    <div class="row">
+      <div class="col-lg-8 col-lg-push-2 hidden-xs">
+        <ul class="unstyled steps-list clearfix">
+          <li class="selected" data-step="1"><span>1. Upload your image</span></li>
+          <li class="mid-step" data-step="2"><span>2. Choose your pan</span></li>
+          <li data-step="3"><span>3. Get cooking!</span></li>
+        </ul>
       </div>
     </div>
-  </div>
-</section>
 
-<section class="step-2">
-  <div class="row">
-    <div class="col-lg-12 image-wrapper text-center">
-      <div class="tweaker-wrapper">
-        <img class="img-responsive rounded-corners drop-shadow" alt="" />
-        
-        <div class="tweaker">
-          Pancake not how you like it? Make a tweak:
-          <div>
-            <a href="#" class="btn btn-primary btn-tweak js-tweak-darker">Go Darker</a>
-            <a href="#" class="btn btn-primary btn-tweak js-tweak-lighter">Go Lighter</a>
+    <section class="upload">
+      <div class="plugin-wrapper">
+        <div class="state-wrapper">
+          <div class="state state-intro">
+            <h3 class="font-source-sans">Choose a photo of your face to be baked by our Pancake Selfie Maker.</h3> 
+            <p class="lead">For best results, use a pic with only one face, ideally with a clear background.</p>
+            <br /><br />
+
+            <a href="#" class="btn btn-block btn-primary js-pick-webcam hidden-xs">Webcam</a>
+            <br />
+            <a href="#" class="btn btn-block btn-primary js-pick-facebook">Facebook</a>
+            <br />
+            <a href="#" class="btn btn-block btn-primary js-pick-instagram">Instagram</a>
+            <br />
+            <a href="#" class="btn btn-block btn-primary js-pick-computer">
+              <input type="file" name="file">
+              <span class="hidden-xs">Computer</span>
+              <span class="visible-xs">Device</span>
+            </a>
+          </div>
+
+          <div class="state state-pick-webcam">
+            <div class="wrapper">
+              <p class="text-muted helper">Please grant access to your webcam.</p>
+              <div id="webcam" class="frame"></div>
+            </div>
+
+            <a href="#" class="btn btn-primary btn-large js-webcam-capture">Capture</a>
+          </div>
+
+          <div class="state state-pick-facebook">
+            <h3>Here's all your photos from Facebook</h3>
+            <p class="lead">Click the one you'd like to use.</p>
+            <div class="grid"></div>
+          </div>
+
+          <div class="state state-pick-instagram">
+            <h3>Here's all your photos from Instagram</h3>
+            <p class="lead">Click the one you'd like to use.</p>
+            <div class="grid"></div>
+          </div>
+
+          <div class="state state-face-selector">
+            <h3>We've found multiple faces in your photo</h3>
+            <p class="lead">Click the one which is you.</p>
+            <div class="faces"></div>
+          </div>
+          
+          <div class="state state-loading">
+            <h3>Loading...</h3>
+            <br />
+            <img src="/img/loading.gif">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="customise">
+      <div class="row">
+        <div class="col-lg-12 image-wrapper text-center">
+          <div class="tweaker-wrapper">
+            <div class="loading">
+              <img src="/img/loading.gif">
+            </div>
+
+            <img class="img-responsive rounded-corners drop-shadow" alt="" />
+            
+            <div class="tweaker">
+              Pancake not how you like it? Make a tweak:
+              <div>
+                <a href="#" class="btn btn-primary btn-tweak js-tweak-darker">Go Darker</a>
+                <a href="#" class="btn btn-primary btn-tweak js-tweak-lighter">Go Lighter</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="img-controls">
+            <a href="#" class="btn btn-primary btn-direction btn-left js-step-back"><span>Back</span></a>
+            <a href="#" class="btn btn-primary btn-direction btn-right js-step-next"><span>Next</span></a>
           </div>
         </div>
       </div>
 
-      <div class="img-controls">
-        <a href="#" class="btn btn-primary btn-direction btn-left js-step-back"><span>Back</span></a>
-        <a href="#" class="btn btn-primary btn-direction btn-right js-step-next"><span>Next</span></a>
+      <div class="pan-switcher">
+        <h1 class="courgette-font js-pan-name">
+          <div data-pan="jamie">The Jamie Oliver Pan</div>
+          <div data-pan="superior">The Superior Pan</div>
+          <div data-pan="ingenio">The Ingenio Pan</div>
+        </h1>
+
+        <p class="lead">To see your Selfie cooked differently, click on the pans, below.</p>
+
+        <div class="row">
+          <ul class="unstyled cross-sell-list pan-selector-list">
+            <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <figure data-pan="superior">
+                <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-superior.jpg" alt="Tefal Superior" /></a>
+                <figcaption>
+                  <h2>TEFAL SUPERIOR <span class="hidden-xs">Perfect for crepes</span></h2>
+                  <a href="#" class="btn btn-outline">Select</a>
+                </figcaption>
+              </figure>
+            </li>
+            <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <figure data-pan="jamie">
+                <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-jamie-oliver.jpg" alt="Tefal Jamie Oliver" /></a>
+                <figcaption>
+                  <h2>TEFAL JAMIE OLIVER <span class="hidden-xs">Perfect for pancakes</span></h2>
+                  <a href="#" class="btn btn-outline">Select</a>
+                </figcaption>
+              </figure>
+            </li>
+            <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              <figure data-pan="ingenio">
+                <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-ingenio.jpg" alt="Tefal Ingenio" /></a>
+                <figcaption>
+                  <h2>TEFAL INGENIO <span class="hidden-xs">Perfect for oven baking</span></h2>
+                  <a href="#" class="btn btn-outline">Select</a>
+                </figcaption>
+              </figure>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sharing">
+        <p class="lead">Share your pancake selfie with friends and encourage them to create their own!</p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="bg-dark-grey gallery-submission">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 text-white">
+        <h1 class="courgette-font"><span>Plus!</span> Win a 13-piece Ingenio pans collection worth &pound;250!</h1>
+        <p class="large-text">Submit your pancake selfie into our gallery for your chance to win the latest innovation from Tefal - stackable cookware featuring a patented detachable handle.</p>
+
+        <form role="form" class="row">
+          <fieldset class="col-lg-7 col-md-7">
+            <legend class="hide">Entry form</legend>
+
+            <div class="form-group">
+              <label class="hide">Name</label>
+              <input type="text" class="form-control name" placeholder="Name" required />
+            </div>
+
+            <div class="form-group">
+              <label class="hide">Email</label>
+              <input type="email" class="form-control email" placeholder="Email" required />
+            </div>
+
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" class="tos" required /> I agree to the <a href="#">terms &amp; conditions</a>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-medium">Submit entry</button>
+          </fieldset>
+        </form>
+
+        <div class="success">
+          <div class="alert alert-success">
+            Thank you for your submission. Good luck!
+          </div>
+
+          <p><a href="<%= ENV['STATIC_URL'] %>/en/competition/gallery" class="btn btn-primary btn-medium btn-sm">Visit the gallery</a></p>
+        </div>
+
+      </div>
+
+      <div class="col-lg-6 col-md-6 col-sm-6">
+        <img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/prize.png" alt="Tefal ingenio" />
       </div>
     </div>
   </div>
-  
-
-
-  <h1 class="courgette-font js-pan-name">
-    <div data-pan="jamie">The Jamie Oliver Pan</div>
-    <div data-pan="superior">The Superior Pan</div>
-    <div data-pan="ingenio">The Ingenio Pan</div>
-  </h1>
-
-
-
-  <p class="lead">To see your Selfie cooked differently, click on the pans, below.</p>
-
-  <div class="row">
-    <ul class="unstyled cross-sell-list pan-selector-list">
-      <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-        <figure data-pan="superior">
-          <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-superior.jpg" alt="Tefal Superior" /></a>
-          <figcaption>
-            <h2>TEFAL SUPERIOR <span class="hidden-xs">Perfect for crepes</span></h2>
-            <a href="#" class="btn btn-outline">Select</a>
-          </figcaption>
-        </figure>
-      </li>
-      <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-        <figure data-pan="jamie">
-          <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-jamie-oliver.jpg" alt="Tefal Jamie Oliver" /></a>
-          <figcaption>
-            <h2>TEFAL JAMIE OLIVER <span class="hidden-xs">Perfect for pancakes</span></h2>
-            <a href="#" class="btn btn-outline">Select</a>
-          </figcaption>
-        </figure>
-      </li>
-      <li class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
-        <figure data-pan="ingenio">
-          <a href="#" title="Vist the Tefal online shop" target="_blank"><img class="img-responsive" src="<%= ENV['STATIC_URL'] %>/content/tefal/img/home/tefal-ingenio.jpg" alt="Tefal Ingenio" /></a>
-          <figcaption>
-            <h2>TEFAL INGENIO <span class="hidden-xs">Perfect for oven baking</span></h2>
-            <a href="#" class="btn btn-outline">Select</a>
-          </figcaption>
-        </figure>
-      </li>
-    </ul>
-  </div>
-</section>
+</div>

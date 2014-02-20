@@ -24,8 +24,17 @@ module Pancaker
       absolute_path("tmp/uploads/#{path}")
     end
 
-    def public_path(path)
+    def public_upload_path(path)
       absolute_path("public/uploads/#{path}")
+    end
+
+    def public_face_path(path)
+      absolute_path("public/faces/#{path}")
+    end
+
+    def error(message)
+      status 422
+      { error: message }.to_json
     end
 
     get '/' do
@@ -37,7 +46,7 @@ module Pancaker
       image_id           = SecureRandom.uuid
       session[:image_id] = image_id
       path               = tmp_path(image_id)
-      public_path        = public_path("#{image_id}.jpg")
+      public_path        = public_upload_path("#{image_id}.jpg")
 
       case params[:type]
       when 'facebook', 'instagram'
@@ -67,9 +76,11 @@ module Pancaker
       image_id = session[:image_id]
       face_id  = params[:face].to_i
       face     = session[:faces][face_id]
-      source   = public_path("#{image_id}.jpg")
+      source   = public_upload_path("#{image_id}.jpg")
       sway     = params[:sway].to_i
       pan      = ['jamie', 'superior', 'ingenio'].include?(params[:pan]) ? params[:pan] : 'jamie'
+
+      return error('Unable to find image') if image_id.nil?
 
       composite = Compositor.new(source, face, pan, sway)
 
@@ -92,6 +103,55 @@ module Pancaker
       media         = client.user_recent_media.map { |m| m['images']['standard_resolution']['url'] }
 
       "<script>window.opener.Pancake.InstagramPicker.popupCallback(#{media.to_json}); window.close();</script>"
+    end
+
+    post '/gallery' do
+      content_type :json
+
+      name       = params[:name].to_s.strip
+      email      = params[:email].to_s.strip
+      tos_agreed = params[:tos].to_s == '1'
+      image_id   = session[:image_id] || params[:image_id]
+
+      return error('You must supply a name and email.') if name.empty? or email.empty?
+      return error('You must agree to the terms and conditions.') unless tos_agreed
+      return error('Invalid email address supplied.') unless email.include?('@')
+      return error('An error occurred uploading your selfie. Please try again later.') unless image_id
+ 
+      key    = 'key'
+      secret = 'secret'
+      data   = {
+        name: name,
+        email: email,
+        content: Base64.encode64(File.read(public_face_path("#{image_id}.jpg")))
+      }
+      epoch  = Time.now.to_i
+
+      hash = Digest::SHA256.new
+      hash << {
+        APIKEY: key,
+        APISECRET: secret,
+        data: data,
+        epoch: epoch
+      }.to_json
+      hash = hash.hexdigest
+
+      entry = HTTParty.post('http://test.tefal.pancake.yomego.com/api/entry', {
+        format: :json,
+        query: {
+          APIKEY: key,
+          hash: hash,
+          epoch: epoch
+        },
+        body: data.to_json,
+        headers: {
+          'Content-Type' => 'application/json'
+        }
+      })
+
+      return error(entry.parsed_response['message']) if entry.code < 200 or entry.code > 299
+
+      status 204
     end
   end
 end
