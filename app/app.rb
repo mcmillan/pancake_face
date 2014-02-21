@@ -37,9 +37,55 @@ module Pancaker
       { error: message }.to_json
     end
 
+    def gallery_api(method, endpoint, data)
+      key    = 'josh'
+      secret = 'dfnsdkjfhsky48ry4oh34ry398h'
+      epoch  = Time.now.to_i.to_s
+
+      json = {
+        APIKEY: key,
+        APISECRET: secret,
+        data: data.to_json,
+        epoch: epoch
+      }.to_json
+      hash = Digest::SHA256.hexdigest(json)
+
+      entry = HTTParty.send(method, "#{ENV['API_URL']}/api#{endpoint}", {
+        query: {
+          APIKEY: key,
+          hash: hash,
+          epoch: epoch
+        },
+        body: data.to_json,
+        headers: {
+          'Content-Type' => 'application/json'
+        }
+      })
+
+      raise Exception.new(entry.parsed_response['message']) if entry.code < 200 or entry.code > 299
+
+      entry.parsed_response
+    end
+
     get '/' do
       puts absolute_path("ffff")
       erb :index
+    end
+
+    get '/detected/:id' do
+      id = params[:id].to_i
+      
+      return pass unless defined?(session[:faces][id]) and defined?(session[:image_id])
+
+      face = session[:faces][id]
+
+      image = MiniMagick::Image.open(public_upload_path("#{session[:image_id]}.jpg"))
+      image.combine_options do |i|
+        i.crop "#{face.width}x#{face.height}+#{face.coordinates[:top_left][:x]}+#{face.coordinates[:top_left][:y]}"
+        i.resize "^200x200"
+      end
+      content_type :jpeg
+      image.to_blob
     end
 
     post '/detect' do
@@ -108,74 +154,46 @@ module Pancaker
     post '/gallery' do
       content_type :json
 
+      image_id = session[:image_id]
+
+      return error('An error occurred uploading your selfie. Please try again later.') unless image_id
+
+      begin
+        entry = gallery_api(:post, '/entry', {
+          content: Base64.encode64(File.read(public_face_path("#{image_id}.jpg")))
+        })
+      rescue => e
+        return error(e.to_s)
+      end
+
+      gallery_id           = entry['data']['Id']
+      session[:gallery_id] = gallery_id
+
+      { shareURL: "#{ENV['API_URL']}/en/competition/details/#{gallery_id}" }.to_json
+    end
+
+    post '/gallery/competition' do
+      content_type :json
+
       name       = params[:name].to_s.strip
       email      = params[:email].to_s.strip
       tos_agreed = params[:tos].to_s == '1'
-      image_id   = session[:image_id] || params[:image_id]
+      image_id   = session[:image_id]
+      gallery_id = session[:gallery_id]
 
       return error('You must supply a name and email.') if name.empty? or email.empty?
       return error('You must agree to the terms and conditions.') unless tos_agreed
       return error('Invalid email address supplied.') unless email.include?('@')
-      return error('An error occurred uploading your selfie. Please try again later.') unless image_id
- 
-      key    = 'josh'
-      secret = 'dfnsdkjfhsky48ry4oh34ry398h'
+      return error('An error occurred uploading your selfie. Please try again later.') unless image_id and gallery_id
 
-      # Create initial user
-      data   = {
-        content: Base64.encode64(File.read(public_face_path("#{image_id}.jpg")))
-      }
-      epoch  = Time.now.to_i.to_s
-
-      json = {
-        APIKEY: key,
-        APISECRET: secret,
-        data: data.to_json,
-        epoch: epoch
-      }.to_json
-      hash = Digest::SHA256.hexdigest(json)
-
-      entry = HTTParty.post('http://test.tefal.pancake.yomego.com/api/entry', {
-        query: {
-          APIKEY: key,
-          hash: hash,
-          epoch: epoch
-        },
-        body: data.to_json,
-        headers: {
-          'Content-Type' => 'application/json'
-        }
-      })
-
-      return error(entry.parsed_response['message']) if entry.code < 200 or entry.code > 299
-
-      data   = {
-        name: name,
-        email: email
-      }
-      epoch  = Time.now.to_i.to_s
-
-      json = {
-        APIKEY: key,
-        APISECRET: secret,
-        data: data.to_json,
-        epoch: epoch
-      }.to_json
-      hash = Digest::SHA256.hexdigest(json)
-
-      update = HTTParty.put("http://test.tefal.pancake.yomego.com/api/entry/#{entry.parsed_response['data']['Id']}", {
-        query: {
-          APIKEY: key,
-          hash: hash,
-          epoch: epoch
-        },
-        body: data.to_json,
-        headers: {
-          'Content-Type' => 'application/json'
-        }
-      })
-
-      return error(update.parsed_response['message']) if update.code < 200 or update.code > 299
+      begin
+        gallery_api(:put, "/entry/#{gallery_id}", {
+          name: name,
+          email: email
+        })
+      rescue => e
+        return error(e.to_s)
+      end
 
       status 204
     end

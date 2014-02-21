@@ -53,9 +53,23 @@ $('section.customise .js-step-back').on('click', (event) ->
 
 $('section.customise .js-step-next').on('click', (event) ->
   event.preventDefault()
-  $('.customise .tweaker-wrapper .tweaker, section.customise .js-step-next').fadeOut(500)
-  $('.customise .pan-switcher').slideUp(500)
-  $('.gallery-submission, .customise .sharing').slideDown(500)
-  $('.steps-list li[data-step=3]').addClass('selected')
-  Pancake.Generator.focusImage()
+
+  $('.customise .tweaker-wrapper .tweaker, .customise .img-controls a').fadeOut(300)
+  $('.customise .pan-switcher').slideUp(300)
+  $('.customise .tweaker-wrapper > img').fadeTo(300, 0)
+  $('.customise .tweaker-wrapper .tweaker, .customise .img-controls a, .customise .tweaker-wrapper > img, .customise .pan-switcher').promise().done(->
+    $.ajax(
+      url: '/gallery'
+      type: 'post'
+      complete: (jqXHR, status) ->
+        $('.gallery-submission, .customise .sharing').slideDown(300)
+        $('.customise .tweaker-wrapper > img').fadeTo(300, 1)
+        $('.steps-list li[data-step=3]').addClass('selected')
+        Pancake.Generator.focusImage()
+        return unless status == 'success'
+        addthis.toolbox('.addthis_toolbox', {}, url: jqXHR.responseJSON.shareURL)
+        $('.customise .sharing .plugins .fb-send').attr('data-href', jqXHR.responseJSON.shareURL)
+        FB.XFBML.parse()          
+    )
+  )
 )
