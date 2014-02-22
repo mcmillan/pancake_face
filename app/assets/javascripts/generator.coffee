@@ -1,7 +1,7 @@
 class @Pancake.Generator
   @processing: false
   @sway: 0
-  @pan: 'jamie'
+  @pan: ['jamie', 'superior', 'ingenio'][Math.floor(Math.random()*3)]
 
   @init: ->
     $('.state.state-face-selector .faces').on('click', '.face', @chooseFaceFromSelector)
