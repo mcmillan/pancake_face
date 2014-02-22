@@ -62,7 +62,7 @@ module Pancaker
         }
       })
 
-      raise Exception.new(entry.parsed_response['message']) if entry.code < 200 or entry.code > 299
+      raise entry.parsed_response['message'].to_s if entry.code < 200 or entry.code > 299
 
       entry.parsed_response
     end
@@ -182,8 +182,9 @@ module Pancaker
       gallery_id = session[:gallery_id]
 
       return error('You must supply a name and email.') if name.empty? or email.empty?
+      return error('Your name is an invalid format.') unless name =~ /([\w\- ]+)/ and name.length <= 20
       return error('You must agree to the terms and conditions.') unless tos_agreed
-      return error('Invalid email address supplied.') unless email.include?('@')
+      return error('Invalid email address supplied.') unless email =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/
       return error('An error occurred uploading your selfie. Please try again later.') unless image_id and gallery_id
 
       begin
