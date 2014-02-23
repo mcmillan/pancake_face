@@ -21,10 +21,18 @@ $('.js-pick-computer input').fileupload(
     type: 'computer'
   add: (event, data) ->
     $('.state.state-intro').fadeOut(300).promise().done(->
+      $('.state.state-intro .alert').remove()
       $('.state.state-loading').fadeIn(300).promise().done(-> data.submit())
     )
   done: (event, data) ->
     Pancake.Detector.success(data.response().result)
+  fail: ->
+    $('<div class="alert alert-danger" />')
+      .text("An error occurred while uploading your photo. Try again?")
+      .insertBefore('.state.state-intro .js-pick-webcam')
+      $('.state.state-loading').fadeOut(300).promise().done(->
+        $('.state.state-intro').delay(300).fadeIn(300)
+      )
 )
 
 $('section.customise .js-step-back').on('click', (event) ->

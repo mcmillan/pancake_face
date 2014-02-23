@@ -1,1 +1,1 @@
-web: bundle exec rackup -p 1337 -E production
+web: bundle exec puma -p 1337 -e production -w 2 --preload
