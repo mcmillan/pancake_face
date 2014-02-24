@@ -1,1 +1,1 @@
-web: bundle exec puma -p 1337 -e production -w 2 --preload
+web: bundle exec puma -p 1337 -e ${RACK_ENV:-development} -w 2 --preload

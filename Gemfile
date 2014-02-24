@@ -29,3 +29,4 @@ gem 'httparty', '~> 0.13.0'
 # Deployment
 gem 'puma', '~> 2.7.1'
 gem 'foreman', '~> 0.63.0'
+gem 'bugsnag', '~> 1.8.4'

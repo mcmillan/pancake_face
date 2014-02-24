@@ -1,5 +1,8 @@
 module Pancaker
   class App < Sinatra::Base
+    use Bugsnag::Rack
+    enable :raise_errors
+
     # Configure sessions
     enable :sessions
     set :session_secret, ENV['SESSION_SECRET']

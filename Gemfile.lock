@@ -13,6 +13,9 @@ GEM
     bourbon (3.1.8)
       sass (>= 3.2.0)
       thor
+    bugsnag (1.8.4)
+      httparty (>= 0.6, < 1.0)
+      multi_json (~> 1.0)
     climate_control (0.0.3)
       activesupport (>= 3.0)
     cocaine (0.5.3)
@@ -95,6 +98,7 @@ PLATFORMS
 
 DEPENDENCIES
   bourbon (~> 3.1.8)
+  bugsnag (~> 1.8.4)
   cocaine (~> 0.5.3)
   coffee-script (~> 2.2.0)
   colorscore (~> 0.0.4)
