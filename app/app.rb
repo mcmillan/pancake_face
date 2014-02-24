@@ -181,7 +181,7 @@ module Pancaker
       gallery_id = session[:gallery_id]
 
       return error('You must supply a name and email.') if name.empty? or email.empty?
-      return error('Your name is an invalid format.') unless name =~ /([\w\- ]+)/ and name.length <= 20
+      return error('Your name is an invalid format.') unless name =~ /\A([\w\- ]+)\z/ and name.length <= 20
       return error('You must agree to the terms and conditions.') unless tos_agreed
       return error('Invalid email address supplied.') unless email =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/
       return error('An error occurred uploading your selfie. Please try again later.') unless image_id and gallery_id
