@@ -104,7 +104,7 @@ module Pancaker
       end
 
       begin
-        Cocaine::CommandLine.new('convert', ':in :out').run(in: path, out: public_path)
+        Cocaine::CommandLine.new('convert', ':in -resize 1500x1500> :out').run(in: path, out: public_path)
       ensure
         FileUtils.rm_rf(path)
       end
